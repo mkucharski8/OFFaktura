@@ -1,5 +1,5 @@
 # OFFaktura
 
-Publiczna strona programu OFFaktura. W tym repozytorium jest tylko strona. Kodu aplikacji tu nie ma.
+Instalator Windows jest w [wydaniach](https://github.com/mkucharski8/OFFaktura/releases).
 
-Railway: katalog główny tego repozytorium, start `npm start`. Sprawdzenie: `/health`.
+Kodu programu w tym repozytorium nie ma.
