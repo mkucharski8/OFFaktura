@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OFFaktura – Faktury lokalnie</title>
+  <meta name="description" content="OFFaktura 0.2.0. Faktury sprzedażowe i zakupowe na Twoim komputerze, z wysyłką i pobieraniem z KSeF. Windows.">
+  <meta property="og:title" content="OFFaktura – Faktury lokalnie">
+  <meta property="og:description" content="Program na Windows. Faktury zostają na dysku. Do KSeF idzie tylko to, co wyślesz albo pobierzesz.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f3d32'/%3E%3Cpath d='M8 10h16v2H8zm0 5h10v2H8zm0 5h13v2H8z' fill='%23f3f1ea'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #efeae1;
+      --card: #fffdf8;
+      --ink: #1c241f;
+      --muted: #5c6b63;
+      --green: #1f3d32;
+      --green-2: #173026;
+      --line: #e2ddd2;
+      --soft: #e7f0ea;
+      --font: "Segoe UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        radial-gradient(900px 420px at 100% -10%, #e7f0ea 0%, transparent 55%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    a { color: inherit; }
+    .wrap { width: min(1080px, calc(100% - 40px)); margin: 0 auto; }
+    header {
+      position: sticky; top: 0; z-index: 5;
+      background: rgba(255, 253, 248, 0.92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+    }
+    .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 72px; }
+    .brand { display: flex; flex-direction: column; text-decoration: none; }
+    .brand strong { font-size: 1.25rem; letter-spacing: -0.03em; }
+    .brand span { color: var(--muted); font-size: 0.85rem; }
+    .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: #fff; }
+    .lang button { border: 0; background: transparent; color: var(--muted); padding: 6px 12px; cursor: pointer; font: inherit; }
+    .lang button.on { background: var(--green); color: #fff; }
+    .hero { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 36px; align-items: center; padding: 56px 0 28px; }
+    h1 { margin: 0 0 14px; font-size: clamp(2.1rem, 4vw, 3.3rem); line-height: 1.05; letter-spacing: -0.04em; }
+    .lead { margin: 0 0 22px; color: var(--muted); font-size: 1.08rem; max-width: 38rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 44px; padding: 0 18px; border-radius: 10px;
+      border: 1px solid var(--line); background: #fff; color: var(--ink);
+      font-weight: 650; text-decoration: none; font-size: 0.98rem;
+    }
+    .btn.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .btn.primary:hover { background: var(--green-2); }
+    .btn:hover { text-decoration: none; }
+    .file { color: var(--muted); font-size: 0.86rem; }
+    .sheet {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 18px 50px rgba(31, 61, 50, 0.08);
+      overflow: hidden;
+    }
+    .sheet-top { display: flex; justify-content: space-between; gap: 12px; padding: 16px 18px; background: var(--green); color: #fff; }
+    .sheet-top b { display: block; font-size: 1.05rem; }
+    .sheet-top span { opacity: 0.8; font-size: 0.82rem; }
+    .chip { align-self: flex-start; background: #d9efe3; color: #1f6b45; border-radius: 999px; padding: 4px 10px; font-size: 0.78rem; font-weight: 700; }
+    .rows { padding: 8px 18px 16px; }
+    .rowline { display: grid; grid-template-columns: 1.3fr 0.7fr 0.6fr; gap: 8px; padding: 11px 0; border-bottom: 1px solid #eee8dc; font-size: 0.92rem; }
+    .rowline span:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .muted { color: var(--muted); }
+    .section { padding: 28px 0 8px; }
+    h2 { margin: 0 0 8px; font-size: 1.7rem; letter-spacing: -0.03em; }
+    .sub { margin: 0 0 18px; color: var(--muted); max-width: 40rem; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 16px; }
+    .card h3 { margin: 0 0 8px; font-size: 1.05rem; }
+    .card p, .card li { color: var(--muted); font-size: 0.94rem; }
+    .card ul { margin: 0; padding-left: 1.1rem; }
+    .card li + li { margin-top: 6px; }
+    .wide { grid-column: 1 / -1; display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; align-items: center; }
+    .download {
+      margin: 28px 0 10px;
+      padding: 22px;
+      border-radius: 18px;
+      background: var(--green);
+      color: #fff;
+      display: flex; justify-content: space-between; gap: 18px; align-items: center; flex-wrap: wrap;
+    }
+    .download p { margin: 6px 0 0; color: rgba(255,255,255,0.78); }
+    .download .btn { background: #fff; color: var(--green); border-color: #fff; }
+    footer { padding: 28px 0 40px; color: var(--muted); font-size: 0.9rem; }
+    footer a { color: var(--green); }
+    @media (max-width: 860px) {
+      .hero, .grid, .wide { grid-template-columns: 1fr; }
+      .hero { padding-top: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap bar">
+      <a class="brand" href="/">
+        <strong>OFFaktura</strong>
+        <span data-i18n="slogan">Faktury lokalnie</span>
+      </a>
+      <div style="display:flex;gap:12px;align-items:center">
+        <a class="btn primary" id="topDownload" href="https://github.com/mkucharski8/OFFaktura/releases/download/v0.2.0/OFFaktura-Setup-0.2.0.exe">Pobierz 0.2.0</a>
+        <div class="lang" role="group" aria-label="Language">
+          <button id="langPl" type="button">PL</button>
+          <button id="langEn" type="button">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <h1 data-i18n="heroTitle">Faktury zostają na tym komputerze.</h1>
+        <p class="lead" data-i18n="heroLead">OFFaktura wystawia faktury sprzedażowe, ściąga sprzedaż i zakupy z KSeF i trzyma bazę na dysku. Nie ma konta w chmurze. Do ministerstwa idzie tylko to, co sam wyślesz albo pobierzesz.</p>
+        <div class="actions">
+          <a class="btn primary" id="heroDownload" href="https://github.com/mkucharski8/OFFaktura/releases/download/v0.2.0/OFFaktura-Setup-0.2.0.exe" data-i18n="btnDownload">Pobierz instalator 0.2.0</a>
+          <a class="btn" href="https://github.com/mkucharski8/OFFaktura/releases/tag/v0.2.0" target="_blank" rel="noopener" data-i18n="btnRelease">Strona wydania</a>
+        </div>
+        <p class="file" data-i18n="fileNote">Windows · OFFaktura-Setup-0.2.0.exe · wersja 0.2.0</p>
+      </div>
+      <aside class="sheet" aria-hidden="true">
+        <div class="sheet-top">
+          <div>
+            <b>OFFaktura</b>
+            <span data-i18n="sheetSub">Faktury lokalnie · 0.2.0</span>
+          </div>
+          <span class="chip" data-i18n="chip">w KSeF</span>
+        </div>
+        <div class="rows">
+          <div class="rowline"><span>FV/2026/018</span><span class="muted">2026-03-02</span><span>4 920,00</span></div>
+          <div class="rowline"><span>FV/2026/019</span><span class="muted">2026-03-11</span><span>1 350,00</span></div>
+          <div class="rowline"><span>KOR/2026/003</span><span class="muted">2026-03-18</span><span>−240,00</span></div>
+          <div class="rowline"><span data-i18n="sheetBuy">Zakup · FV 44/03</span><span class="muted">2026-03-20</span><span>860,00</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section">
+      <h2 data-i18n="nowTitle">Co jest w 0.2.0</h2>
+      <p class="sub" data-i18n="nowSub">Poprzedni instalator, 0.1.1, umiał wystawić fakturę i wysłać ją do KSeF. Ta wersja domyka drugą stronę: zakupy, import sprzedaży i wygodniejszą listę.</p>
+      <div class="grid">
+        <article class="card">
+          <h3 data-i18n="c1t">Sprzedaż</h3>
+          <ul>
+            <li data-i18n="c1a">Faktura VAT, zaliczka, rozliczenie, uproszczona i pro forma.</li>
+            <li data-i18n="c1b">Korekta do faktury, która już jest w KSeF. Nabywca, waluta i kurs zostają.</li>
+            <li data-i18n="c1c">PDF po polsku, angielsku, niemiecku albo po polsku i angielsku. Logo z ustawień.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3 data-i18n="c2t">KSeF w dwie strony</h3>
+          <ul>
+            <li data-i18n="c2a">Wysyłka szkicu. Po przyjęciu faktura jest zablokowana i ma numer KSeF.</li>
+            <li data-i18n="c2b">Import sprzedaży, jeśli wystawiałeś faktury gdzie indziej, a są już w KSeF.</li>
+            <li data-i18n="c2c">Synchronizacja zakupów. Wizualizacja, PDF i oryginalny XML.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3 data-i18n="c3t">Lista</h3>
+          <ul>
+            <li data-i18n="c3a">Kolumny, filtry i sortowanie. Filtr jest przy widocznej kolumnie.</li>
+            <li data-i18n="c3b">Okres: rok albo kilka miesięcy, na sprzedaży i na zakupie.</li>
+            <li data-i18n="c3c">Jedno czyszczenie zdejmuje filtry i okres.</li>
+          </ul>
+        </article>
+        <article class="card wide">
+          <div>
+            <h3 data-i18n="c4t">Na dysku, nie na cudzym serwerze</h3>
+            <p data-i18n="c4d">Baza, logo i pliki faktur zostają u Ciebie. Token KSeF jest zaszyfrowany przez Windows. Internet schodzi po REGON, kurs NBP i rozmowę z KSeF. Ta strona nie przyjmuje faktur.</p>
+          </div>
+          <ul>
+            <li data-i18n="c4a">Test, demo albo produkcja. Odznakę środowiska widać w programie.</li>
+            <li data-i18n="c4b">Przy zapisie powstaje PDF i XML FA(3). Folder wybierasz sam.</li>
+            <li data-i18n="c4c">Klientów z NIP da się odtworzyć importem, jeśli faktura jest w KSeF. Termin w dniach z karty klienta nie wraca.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="download">
+      <div>
+        <h2 data-i18n="ctaTitle" style="margin:0">Pobierz OFFakturę 0.2.0</h2>
+        <p data-i18n="ctaText">Instalator Windows. W repozytorium nie ma kodu programu. Już zainstalowana 0.1.1 zobaczy to wydanie i poprosi o pobranie.</p>
+      </div>
+      <a class="btn" id="ctaDownload" href="https://github.com/mkucharski8/OFFaktura/releases/download/v0.2.0/OFFaktura-Setup-0.2.0.exe" data-i18n="btnDownload">Pobierz instalator 0.2.0</a>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <div>OFFaktura · <span data-i18n="slogan">Faktury lokalnie</span> · 0.2.0</div>
+    <p><a href="https://www.marcinkucharski.pl" target="_blank" rel="noopener">www.marcinkucharski.pl</a> · <a href="https://github.com/mkucharski8/OFFaktura/releases" target="_blank" rel="noopener">GitHub</a></p>
+  </footer>
+
+  <script>
+    const I18N = {
+      pl: {
+        slogan: 'Faktury lokalnie',
+        btnDownload: 'Pobierz instalator 0.2.0',
+        btnRelease: 'Strona wydania',
+        fileNote: 'Windows · OFFaktura-Setup-0.2.0.exe · wersja 0.2.0',
+        heroTitle: 'Faktury zostają na tym komputerze.',
+        heroLead: 'OFFaktura wystawia faktury sprzedażowe, ściąga sprzedaż i zakupy z KSeF i trzyma bazę na dysku. Nie ma konta w chmurze. Do ministerstwa idzie tylko to, co sam wyślesz albo pobierzesz.',
+        sheetSub: 'Faktury lokalnie · 0.2.0',
+        chip: 'w KSeF',
+        sheetBuy: 'Zakup · FV 44/03',
+        nowTitle: 'Co jest w 0.2.0',
+        nowSub: 'Poprzedni instalator, 0.1.1, umiał wystawić fakturę i wysłać ją do KSeF. Ta wersja domyka drugą stronę: zakupy, import sprzedaży i wygodniejszą listę.',
+        c1t: 'Sprzedaż',
+        c1a: 'Faktura VAT, zaliczka, rozliczenie, uproszczona i pro forma.',
+        c1b: 'Korekta do faktury, która już jest w KSeF. Nabywca, waluta i kurs zostają.',
+        c1c: 'PDF po polsku, angielsku, niemiecku albo po polsku i angielsku. Logo z ustawień.',
+        c2t: 'KSeF w dwie strony',
+        c2a: 'Wysyłka szkicu. Po przyjęciu faktura jest zablokowana i ma numer KSeF.',
+        c2b: 'Import sprzedaży, jeśli wystawiałeś faktury gdzie indziej, a są już w KSeF.',
+        c2c: 'Synchronizacja zakupów. Wizualizacja, PDF i oryginalny XML.',
+        c3t: 'Lista',
+        c3a: 'Kolumny, filtry i sortowanie. Filtr jest przy widocznej kolumnie.',
+        c3b: 'Okres: rok albo kilka miesięcy, na sprzedaży i na zakupie.',
+        c3c: 'Jedno czyszczenie zdejmuje filtry i okres.',
+        c4t: 'Na dysku, nie na cudzym serwerze',
+        c4d: 'Baza, logo i pliki faktur zostają u Ciebie. Token KSeF jest zaszyfrowany przez Windows. Internet schodzi po REGON, kurs NBP i rozmowę z KSeF. Ta strona nie przyjmuje faktur.',
+        c4a: 'Test, demo albo produkcja. Odznakę środowiska widać w programie.',
+        c4b: 'Przy zapisie powstaje PDF i XML FA(3). Folder wybierasz sam.',
+        c4c: 'Klientów z NIP da się odtworzyć importem, jeśli faktura jest w KSeF. Termin w dniach z karty klienta nie wraca.',
+        ctaTitle: 'Pobierz OFFakturę 0.2.0',
+        ctaText: 'Instalator Windows. W repozytorium nie ma kodu programu. Już zainstalowana 0.1.1 zobaczy to wydanie i poprosi o pobranie.'
+      },
+      en: {
+        slogan: 'Invoices, locally',
+        btnDownload: 'Download installer 0.2.0',
+        btnRelease: 'Release page',
+        fileNote: 'Windows · OFFaktura-Setup-0.2.0.exe · version 0.2.0',
+        heroTitle: 'The invoices stay on this computer.',
+        heroLead: 'OFFaktura issues sales invoices, pulls sales and purchases from KSeF, and keeps the database on disk. There is no cloud account. The ministry receives only what you send or download.',
+        sheetSub: 'Invoices, locally · 0.2.0',
+        chip: 'in KSeF',
+        sheetBuy: 'Purchase · INV 44/03',
+        nowTitle: 'What is in 0.2.0',
+        nowSub: 'The previous installer, 0.1.1, could issue an invoice and send it to KSeF. This one adds the other side: purchases, a sales import, and a more usable list.',
+        c1t: 'Sales',
+        c1a: 'VAT invoice, advance, settlement, simplified invoice, and pro forma.',
+        c1b: 'A correction of an invoice already in KSeF. Buyer, currency and rate stay as they were.',
+        c1c: 'PDF in Polish, English, German, or Polish and English. Logo from settings.',
+        c2t: 'KSeF both ways',
+        c2a: 'Send a draft. Once accepted, the invoice is locked and has a KSeF number.',
+        c2b: 'Import sales if you issued them elsewhere and they are already in KSeF.',
+        c2c: 'Purchase sync. A preview, a PDF, and the original XML.',
+        c3t: 'The list',
+        c3a: 'Columns, filters and sorting. A filter follows a visible column.',
+        c3b: 'A period: a year, or several months, on sales and on purchases.',
+        c3c: 'One clear removes the filters and the period.',
+        c4t: 'On disk, not on someone else’s server',
+        c4d: 'The database, the logo and the invoice files stay with you. The KSeF token is encrypted by Windows. The internet is used for REGON, the NBP rate and KSeF. This page does not accept invoices.',
+        c4a: 'Test, demo or production. The environment badge is visible in the app.',
+        c4b: 'Saving writes a PDF and an FA(3) XML. You choose the folder.',
+        c4c: 'Clients with a Polish tax id can be rebuilt from a KSeF import. The payment-term days on the client card do not come back.',
+        ctaTitle: 'Download OFFaktura 0.2.0',
+        ctaText: 'Windows installer. The repository does not contain the program source. An installed 0.1.1 will see this release and ask you to download it.'
+      }
+    }
+    const download = 'https://github.com/mkucharski8/OFFaktura/releases/download/v0.2.0/OFFaktura-Setup-0.2.0.exe'
+    function apply(lang) {
+      const dict = I18N[lang] || I18N.pl
+      document.documentElement.lang = lang === 'en' ? 'en' : 'pl'
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n')
+        if (dict[key] != null) el.textContent = dict[key]
+      })
+      document.getElementById('langPl').classList.toggle('on', lang !== 'en')
+      document.getElementById('langEn').classList.toggle('on', lang === 'en')
+      document.getElementById('topDownload').textContent = dict.btnDownload
+      for (const id of ['topDownload', 'heroDownload', 'ctaDownload']) document.getElementById(id).href = download
+      try { localStorage.setItem('offaktura-lang', lang) } catch (e) {}
+    }
+    document.getElementById('langPl').addEventListener('click', () => apply('pl'))
+    document.getElementById('langEn').addEventListener('click', () => apply('en'))
+    let saved = 'pl'
+    try { saved = localStorage.getItem('offaktura-lang') || 'pl' } catch (e) {}
+    apply(saved === 'en' ? 'en' : 'pl')
+  </script>
+</body>
+</html>

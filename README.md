@@ -1,5 +1,6 @@
 # OFFaktura
 
-Instalator Windows jest w [wydaniach](https://github.com/mkucharski8/OFFaktura/releases).
+Faktury lokalnie. Strona programu, bez kodu aplikacji.
 
-Kodu programu w tym repozytorium nie ma.
+- Strona: https://offaktura-production.up.railway.app
+- Instalator 0.2.0: https://github.com/mkucharski8/OFFaktura/releases/download/v0.2.0/OFFaktura-Setup-0.2.0.exe
