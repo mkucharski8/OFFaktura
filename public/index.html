@@ -161,6 +161,13 @@
     .plan-price small { font-size: 0.95rem; font-weight: 500; color: var(--muted); letter-spacing: 0; }
     .plan ul { margin: 0 0 20px; padding-left: 1.1rem; color: var(--muted); }
     .plan li + li { margin-top: 6px; }
+    .plan-lead { margin: -6px 0 14px; color: var(--muted); font-size: 0.94rem; }
+    .plan ul.marks { list-style: none; padding-left: 0; }
+    .marks li { position: relative; padding-left: 24px; }
+    .marks li::before { position: absolute; left: 0; top: 0; font-weight: 700; }
+    .marks li.yes::before { content: "✓"; color: var(--mint-ink); }
+    .marks li.no { color: #8d2d2d; }
+    .marks li.no::before { content: "✕"; color: #c44b4b; }
     .buy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
     .buy-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 0.88rem; font-weight: 600; }
     .buy-grid .wide-field { grid-column: 1 / -1; }
@@ -363,12 +370,15 @@
       <p class="intro">Program pobierasz za darmo i sprawdzasz na środowisku testowym KSeF tak długo, jak chcesz. Licencję kupujesz, gdy chcesz wysyłać prawdziwe faktury.</p>
       <div class="pricing">
         <div class="plan">
-          <span class="plan-name">Test</span>
-          <div class="plan-price">0 zł</div>
-          <ul>
-            <li>Faktury, klienci, filtry</li>
-            <li>Środowisko testowe KSeF</li>
-            <li>Bez plików PDF i XML oraz podglądu wydruku</li>
+          <span class="plan-name">Wersja próbna</span>
+          <div class="plan-price">0 zł <small>bez limitu czasu</small></div>
+          <p class="plan-lead">Do sprawdzenia programu przed zakupem.</p>
+          <ul class="marks">
+            <li class="yes">Wystawianie faktur, korekt i pro form w programie</li>
+            <li class="yes">Klienci z danymi z GUS, kurs NBP, filtry i okres</li>
+            <li class="yes">Wysyłka i pobieranie faktur na testowym KSeF</li>
+            <li class="no">Bez plików PDF i XML oraz podglądu wydruku</li>
+            <li class="no">Bez demo i produkcyjnego KSeF</li>
           </ul>
           <a class="btn" href="https://github.com/mkucharski8/OFFaktura/releases/download/v0.2.0/OFFaktura-Setup-0.2.0.exe">Pobierz za darmo</a>
         </div>
