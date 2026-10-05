@@ -186,6 +186,9 @@
     @media (max-width: 600px) { .buy-grid { grid-template-columns: 1fr; } }
     footer { padding: 34px 0 44px; color: var(--muted); font-size: 0.9rem; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
     footer a { color: var(--green); }
+    footer .p24 { flex-basis: 100%; display: flex; align-items: center; gap: 18px; padding-top: 18px; border-top: 1px solid var(--line, #e3ddd1); }
+    footer .p24 img { flex: none; background: #fff; padding: 6px 8px; border-radius: 8px; }
+    footer .p24 p { margin: 0; font-size: 0.8rem; line-height: 1.5; }
 
     @media (max-width: 920px) {
       nav { display: none; }
@@ -474,6 +477,10 @@
   <footer class="wrap">
     <span>OFFaktura · Faktury lokalnie</span>
     <span><a href="/regulamin">Regulamin</a> · <a href="/prywatnosc">Polityka prywatności</a> · <a href="https://www.marcinkucharski.pl" target="_blank" rel="noopener">www.marcinkucharski.pl</a></span>
+    <div class="p24">
+      <img src="/przelewy24.png" alt="Przelewy24" width="120" height="42">
+      <p>Operatorem kart płatniczych jest PayPro SA Agent Rozliczeniowy, ul. Pastelowa 8, 60-198 Poznań, wpisany do Rejestru Przedsiębiorców Krajowego Rejestru Sądowego prowadzonego przez Sąd Rejonowy Poznań – Nowe Miasto i Wilda w Poznaniu, VIII Wydział Gospodarczy Krajowego Rejestru Sądowego pod numerem KRS 0000347935, NIP 7792369887, Regon 301345068.</p>
+    </div>
   </footer>
 
   <script>
