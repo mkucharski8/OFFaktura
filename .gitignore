@@ -1,3 +1,5 @@
 node_modules
 .railway
 .env
+data
+*.pem

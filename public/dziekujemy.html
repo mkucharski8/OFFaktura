@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Dziękujemy – OFFaktura</title>
+  <style>
+    body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: #f4f1ea; color: #18211c; line-height: 1.55; }
+    .box { width: min(640px, calc(100% - 40px)); margin: 72px auto; background: #fffdf8; border: 1px solid #e3ddd1; border-radius: 18px; padding: 32px; }
+    h1 { margin: 0 0 10px; font-size: 1.8rem; letter-spacing: -0.03em; }
+    p { color: #5a6860; }
+    .key { font-family: Consolas, monospace; font-size: 0.85rem; word-break: break-all; background: #f0ebe1; border-radius: 10px; padding: 14px; color: #18211c; }
+    .btn { display: inline-flex; align-items: center; min-height: 42px; padding: 0 18px; border-radius: 10px; border: 0; background: #1f3d32; color: #fff; font: inherit; font-weight: 650; cursor: pointer; text-decoration: none; }
+    .btn.light { background: #fff; color: #1f3d32; border: 1px solid #e3ddd1; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    ol { color: #5a6860; padding-left: 1.2rem; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div id="wait">
+      <h1>Sprawdzamy płatność…</h1>
+      <p>Przelewy24 zwykle potwierdzają wpłatę w kilka sekund. Nie zamykaj tej strony.</p>
+    </div>
+    <div id="done" hidden>
+      <h1>Dziękujemy! To Twój klucz licencji</h1>
+      <p>Wysłaliśmy go też na adres <b id="mail"></b>. Fakturę dostaniesz osobno.</p>
+      <div class="key" id="key"></div>
+      <div class="row">
+        <button class="btn" id="copy" type="button">Kopiuj klucz</button>
+        <a class="btn light" href="https://github.com/mkucharski8/OFFaktura/releases/latest">Pobierz program</a>
+      </div>
+      <ol>
+        <li>Otwórz OFFakturę i wejdź w Ustawienia.</li>
+        <li>Wklej klucz w karcie Licencja i kliknij Aktywuj.</li>
+        <li>Przełącz środowisko KSeF na produkcję i zapisz.</li>
+      </ol>
+    </div>
+    <div id="slow" hidden>
+      <h1>Płatność jeszcze się przetwarza</h1>
+      <p>Jeśli zapłaciłeś, klucz przyjdzie mailem, gdy tylko Przelewy24 potwierdzą wpłatę. Możesz też odświeżyć tę stronę za kilka minut.</p>
+      <div class="row"><a class="btn light" href="/">Wróć na stronę</a></div>
+    </div>
+  </div>
+  <script>
+    const id = new URLSearchParams(location.search).get('s') || ''
+    const show = name => ['wait', 'done', 'slow'].forEach(k => { document.getElementById(k).hidden = k !== name })
+    let tries = 0
+    async function poll() {
+      tries++
+      try {
+        const res = await fetch('/api/order/' + encodeURIComponent(id))
+        const data = await res.json()
+        if (data.status === 'paid' && data.license) {
+          document.getElementById('key').textContent = data.license
+          document.getElementById('mail').textContent = data.email || ''
+          show('done')
+          return
+        }
+      } catch (e) {}
+      if (tries >= 40) return show('slow')
+      setTimeout(poll, 3000)
+    }
+    document.getElementById('copy').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(document.getElementById('key').textContent)
+      document.getElementById('copy').textContent = 'Skopiowano'
+    })
+    if (id) poll(); else show('slow')
+  </script>
+</body>
+</html>

@@ -153,6 +153,30 @@
     .cta .btn { background: #fff; color: var(--green); border-color: #fff; }
     .cta small { display: block; margin-top: 10px; color: rgba(255,255,255,0.6); font-size: 0.84rem; text-align: center; }
 
+    .pricing { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 16px; align-items: start; }
+    .plan { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 24px; }
+    .plan.main { border: 2px solid var(--green); box-shadow: 0 20px 50px rgba(31, 61, 50, 0.1); }
+    .plan-name { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+    .plan-price { font-size: 2.4rem; font-weight: 750; letter-spacing: -0.04em; margin: 6px 0 12px; }
+    .plan-price small { font-size: 0.95rem; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+    .plan ul { margin: 0 0 20px; padding-left: 1.1rem; color: var(--muted); }
+    .plan li + li { margin-top: 6px; }
+    .buy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .buy-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 0.88rem; font-weight: 600; }
+    .buy-grid .wide-field { grid-column: 1 / -1; }
+    .buy-grid input { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    .buy-grid input:focus { outline: 2px solid #b9d8c5; border-color: var(--green); }
+    .opt { color: var(--muted); font-weight: 400; }
+    .check { display: flex; gap: 10px; align-items: flex-start; font-size: 0.88rem; color: var(--muted); margin: 8px 0; }
+    .check input { margin-top: 4px; }
+    .check a { color: var(--green); }
+    #buyBtn { width: 100%; margin-top: 10px; }
+    #buyBtn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    .buy-msg { margin: 10px 0 0; font-size: 0.9rem; color: #8d2d2d; min-height: 1.2em; }
+    .buy-msg.info { color: var(--muted); }
+    .buy-note { margin: 4px 0 0; font-size: 0.82rem; color: var(--muted); text-align: center; }
+    @media (max-width: 920px) { .pricing { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) { .buy-grid { grid-template-columns: 1fr; } }
     footer { padding: 34px 0 44px; color: var(--muted); font-size: 0.9rem; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
     footer a { color: var(--green); }
 
@@ -196,6 +220,7 @@
         <a href="#bezpieczenstwo">Bezpieczeństwo</a>
         <a href="#jak-to-dziala">Jak to działa</a>
         <a href="#funkcje">Funkcje</a>
+        <a href="#cennik">Cennik</a>
         <a href="#faq">FAQ</a>
       </nav>
       <a class="btn primary small" href="https://github.com/mkucharski8/OFFaktura/releases/download/v0.2.0/OFFaktura-Setup-0.2.0.exe">Pobierz</a>
@@ -332,6 +357,47 @@
       </table>
     </section>
 
+    <section id="cennik">
+      <p class="kicker">Cennik</p>
+      <h2>Jedna płatność. Bez abonamentu.</h2>
+      <p class="intro">Program pobierasz za darmo i sprawdzasz na środowisku testowym KSeF tak długo, jak chcesz. Licencję kupujesz, gdy chcesz wysyłać prawdziwe faktury.</p>
+      <div class="pricing">
+        <div class="plan">
+          <span class="plan-name">Test</span>
+          <div class="plan-price">0 zł</div>
+          <ul>
+            <li>Cały program, bez ograniczeń funkcji</li>
+            <li>Środowisko testowe KSeF</li>
+            <li>Faktury, PDF, XML, klienci, filtry</li>
+          </ul>
+          <a class="btn" href="https://github.com/mkucharski8/OFFaktura/releases/download/v0.2.0/OFFaktura-Setup-0.2.0.exe">Pobierz za darmo</a>
+        </div>
+        <div class="plan main">
+          <span class="plan-name">Licencja</span>
+          <div class="plan-price">49 zł <small>brutto, jednorazowo</small></div>
+          <ul>
+            <li>Produkcyjny KSeF: wysyłka sprzedaży i pobieranie zakupów</li>
+            <li>Licencja bezterminowa, z aktualizacjami</li>
+            <li>Klucz od razu po płatności i mailem</li>
+            <li>Faktura za zakup</li>
+          </ul>
+          <form id="buy" novalidate>
+            <div class="buy-grid">
+              <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
+              <label>NIP <span class="opt">(opcjonalnie)</span><input name="nip" inputmode="numeric" autocomplete="off"></label>
+              <label class="wide-field">Firma albo imię i nazwisko<input name="company" required autocomplete="organization"></label>
+              <label class="wide-field">Adres do faktury<input name="address" required autocomplete="street-address" placeholder="ulica i numer, kod pocztowy, miasto"></label>
+            </div>
+            <label class="check"><input type="checkbox" name="terms"> Akceptuję <a href="/regulamin" target="_blank">regulamin</a> i <a href="/prywatnosc" target="_blank">politykę prywatności</a>.</label>
+            <label class="check"><input type="checkbox" name="instant"> Chcę otrzymać klucz od razu po płatności. Wiem, że tracę wtedy prawo do odstąpienia od umowy.</label>
+            <button class="btn primary" type="submit" id="buyBtn">Kupuję za 49 zł</button>
+            <p class="buy-msg" id="buyMsg" role="status"></p>
+            <p class="buy-note">Płatność przez Przelewy24: BLIK, przelew, karta.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
     <section id="faq">
       <p class="kicker">FAQ</p>
       <h2>Częste pytania</h2>
@@ -339,6 +405,14 @@
         <details open>
           <summary>Czy moje faktury trafiają na jakiś serwer OFFaktury?</summary>
           <p>Nie. Nie ma serwera OFFaktury, na który trafiałyby faktury. Baza jest plikiem w Twoim profilu użytkownika Windows. Faktury trafiają tylko do KSeF i tylko wtedy, gdy je wyślesz. Program odczytuje też publiczne dane: firmę po NIP z GUS i kurs z NBP.</p>
+        </details>
+        <details>
+          <summary>Ile kosztuje i co daje licencja?</summary>
+          <p>Program jest darmowy na środowisku testowym KSeF. Licencja kosztuje 49 zł brutto, jednorazowo, i odblokowuje środowisko demo i produkcyjne, czyli wysyłkę prawdziwych faktur i pobieranie zakupów. Nie ma abonamentu.</p>
+        </details>
+        <details>
+          <summary>Jak aktywować klucz?</summary>
+          <p>W programie wejdź w Ustawienia, wklej klucz w karcie Licencja i kliknij Aktywuj. Klucz sprawdzany jest na Twoim komputerze, bez łączenia się z naszym serwerem.</p>
         </details>
         <details>
           <summary>Czy program działa bez internetu?</summary>
@@ -385,7 +459,7 @@
 
   <footer class="wrap">
     <span>OFFaktura · Faktury lokalnie</span>
-    <span><a href="https://www.marcinkucharski.pl" target="_blank" rel="noopener">www.marcinkucharski.pl</a></span>
+    <span><a href="/regulamin">Regulamin</a> · <a href="/prywatnosc">Polityka prywatności</a> · <a href="https://www.marcinkucharski.pl" target="_blank" rel="noopener">www.marcinkucharski.pl</a></span>
   </footer>
 
   <script>
@@ -417,6 +491,47 @@
     }
     document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => show(b.dataset.flow)))
     show('issue')
+
+    const buy = document.getElementById('buy')
+    const buyBtn = document.getElementById('buyBtn')
+    const buyMsg = document.getElementById('buyMsg')
+    const say = (text, info) => { buyMsg.textContent = text; buyMsg.classList.toggle('info', Boolean(info)) }
+    fetch('/api/config').then(r => r.json()).then(cfg => {
+      if (!cfg.salesOpen) {
+        buyBtn.disabled = true
+        buyBtn.textContent = 'Sprzedaż ruszy wkrótce'
+        say('Już teraz możesz pobrać program i używać go na środowisku testowym KSeF.', true)
+      }
+    }).catch(() => {})
+    buy.addEventListener('submit', async event => {
+      event.preventDefault()
+      const form = new FormData(buy)
+      const body = {
+        email: String(form.get('email') || '').trim(),
+        nip: String(form.get('nip') || '').trim(),
+        company: String(form.get('company') || '').trim(),
+        address: String(form.get('address') || '').trim(),
+        terms: form.get('terms') === 'on',
+        instant: form.get('instant') === 'on'
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) return say('Podaj poprawny e-mail.')
+      if (!body.company) return say('Podaj nazwę firmy albo imię i nazwisko.')
+      if (!body.address) return say('Podaj adres do faktury.')
+      if (body.nip && body.nip.replace(/\D/g, '').length !== 10) return say('NIP ma 10 cyfr.')
+      if (!body.terms) return say('Zaakceptuj regulamin.')
+      if (!body.instant) return say('Zaznacz zgodę na dostarczenie klucza od razu po płatności.')
+      buyBtn.disabled = true
+      say('Łączę z Przelewy24…', true)
+      try {
+        const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        const data = await res.json()
+        if (!res.ok || !data.url) throw new Error(data.error || 'Nie udało się rozpocząć płatności.')
+        location.href = data.url
+      } catch (err) {
+        buyBtn.disabled = false
+        say(err.message)
+      }
+    })
   </script>
 </body>
 </html>
