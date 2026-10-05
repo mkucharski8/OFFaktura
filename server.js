@@ -241,6 +241,13 @@ app.get('/prywatnosc', (_req, res) => res.sendFile(path.join(__dirname, 'public'
 
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`OFFaktura site http://localhost:${port} · sprzedaż ${salesOpen() ? 'włączona' : 'wyłączona'} · P24 ${cfg.sandbox ? 'sandbox' : 'produkcja'}`)
 })
+
+for (const signal of ['SIGTERM', 'SIGINT']) {
+  process.on(signal, () => {
+    server.close(() => process.exit(0))
+    setTimeout(() => process.exit(0), 5000).unref()
+  })
+}
