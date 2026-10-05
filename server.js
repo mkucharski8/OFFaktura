@@ -13,7 +13,7 @@ const cfg = {
   crc: process.env.P24_CRC || '',
   apiKey: process.env.P24_API_KEY || '',
   sandbox: process.env.P24_SANDBOX !== '0',
-  publicUrl: (process.env.PUBLIC_URL || 'https://offaktura-production.up.railway.app').replace(/\/$/, ''),
+  publicUrl: (process.env.PUBLIC_URL || 'https://offaktura.marcinkucharski.pl').replace(/\/$/, ''),
   price: Number(process.env.PRICE_GROSZE) || 4900,
   privateKey: (process.env.LICENSE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
   resendKey: process.env.RESEND_API_KEY || '',
@@ -126,6 +126,12 @@ function limited(ip) {
 }
 
 app.set('trust proxy', 1)
+app.use((req, res, next) => {
+  if (req.hostname.endsWith('.up.railway.app') && !req.path.startsWith('/api/') && req.path !== '/health') {
+    return res.redirect(301, cfg.publicUrl + req.originalUrl)
+  }
+  next()
+})
 app.use(express.json({ limit: '20kb' }))
 
 app.get('/health', (_req, res) => {
