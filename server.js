@@ -98,7 +98,7 @@ function ownerMail(order) {
     `NIP: ${order.nip || 'brak (konsument)'}`,
     `Adres: ${order.address}`,
     `E-mail: ${order.email}`,
-    `Kwota: ${(order.amount / 100).toFixed(2)} zł brutto`,
+    `Kwota: ${(order.amount / 100).toFixed(2)} zł (zw. z VAT)`,
     `Zamówienie: ${order.id}`,
     `P24 orderId: ${order.p24OrderId}`,
     `Opłacone: ${order.paidAt}`
