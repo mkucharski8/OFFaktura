@@ -117,6 +117,7 @@
     .lane ul { margin: 0; padding-left: 1.05rem; font-size: 0.93rem; }
     .lane li + li { margin-top: 5px; }
     .lane.out { border-color: rgba(241, 220, 181, 0.4); }
+    .flow-note { margin: 14px 0 0; color: rgba(255,255,255,0.6); font-size: 0.84rem; }
 
     .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; counter-reset: step; }
     .step { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 18px; position: relative; }
@@ -268,18 +269,19 @@
         </div>
 
         <div class="flow">
-          <h3>Co zostaje u Ciebie, a co wychodzi do sieci?</h3>
-          <p>Wybierz czynność i zobacz, dokąd trafiają dane.</p>
+          <h3>Twoje dane mają tylko jeden adres poza komputerem: KSeF</h3>
+          <p>Wysyłka do KSeF to wymóg ustawy. Poza nim faktury nie trafiają nigdzie. Wybierz czynność i sprawdź.</p>
           <div class="tabs" role="tablist">
             <button type="button" class="on" data-flow="issue">Wystawiam fakturę</button>
             <button type="button" data-flow="send">Wysyłam do KSeF</button>
             <button type="button" data-flow="buy">Pobieram zakupy</button>
-            <button type="button" data-flow="client">Dodaję klienta</button>
+            <button type="button" data-flow="backup">Robię kopię</button>
           </div>
           <div class="lanes">
-            <div class="lane"><b>Zostaje na komputerze</b><ul id="laneIn"></ul></div>
-            <div class="lane out"><b>Wychodzi do sieci</b><ul id="laneOut"></ul></div>
+            <div class="lane"><b>Zostaje na Twoim komputerze</b><ul id="laneIn"></ul></div>
+            <div class="lane out"><b>Trafia do KSeF</b><ul id="laneOut"></ul></div>
           </div>
+          <p class="flow-note">Gdy wpiszesz NIP albo wybierzesz walutę, program tylko odczytuje publiczne dane: nazwę firmy z GUS i kurs z NBP. Nie wysyła tam faktur.</p>
         </div>
       </div>
     </section>
@@ -334,7 +336,7 @@
       <div class="faq">
         <details open>
           <summary>Czy moje faktury trafiają na jakiś serwer OFFaktury?</summary>
-          <p>Nie. Nie ma serwera OFFaktury, na który trafiałyby faktury. Baza jest plikiem w Twoim profilu użytkownika Windows. Do sieci wychodzą tylko zapytania do KSeF, do REGON przy wyszukiwaniu firmy po NIP i do NBP po kurs waluty.</p>
+          <p>Nie. Nie ma serwera OFFaktury, na który trafiałyby faktury. Baza jest plikiem w Twoim profilu użytkownika Windows. Faktury trafiają tylko do KSeF i tylko wtedy, gdy je wyślesz. Program odczytuje też publiczne dane: firmę po NIP z GUS i kurs z NBP.</p>
         </details>
         <details>
           <summary>Czy program działa bez internetu?</summary>
@@ -388,19 +390,19 @@
     const FLOWS = {
       issue: {
         in: ['Dane nabywcy i pozycje faktury', 'PDF i plik XML w wybranym folderze', 'Numeracja i historia faktur'],
-        out: ['Nic, dopóki nie wyślesz faktury', 'Kurs NBP, jeśli faktura jest w walucie']
+        out: ['Nic. Szkic czeka, aż sam klikniesz „Wyślij”']
       },
       send: {
-        in: ['Kopia faktury i numer KSeF', 'Status przyjęcia'],
-        out: ['Faktura w formacie FA(3) do KSeF', 'Token, wyłącznie do logowania w KSeF']
+        in: ['Faktura z nadanym numerem KSeF', 'Status przyjęcia i data wysyłki'],
+        out: ['Faktura w formacie FA(3), tak jak wymaga ustawa']
       },
       buy: {
-        in: ['Faktury zakupowe i oryginalne XML', 'Podgląd i PDF do wydruku'],
-        out: ['Zapytanie do KSeF o faktury, na których jesteś nabywcą']
+        in: ['Faktury od dostawców i ich oryginalne XML', 'Podgląd i PDF do wydruku'],
+        out: ['Tylko pytanie o faktury, na których jesteś nabywcą']
       },
-      client: {
-        in: ['Karta klienta: nazwa, adres, NIP, kontakt'],
-        out: ['NIP do bazy REGON, jeśli klikniesz pobranie danych']
+      backup: {
+        in: ['Jeden plik bazy, który kopiujesz, gdzie chcesz'],
+        out: ['Nic. Kopia nie przechodzi przez żaden serwer']
       }
     }
     const laneIn = document.getElementById('laneIn')
