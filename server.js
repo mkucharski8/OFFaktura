@@ -32,6 +32,16 @@ const readOrder = id => {
 }
 const writeOrder = order => fs.writeFileSync(orderFile(order.id), JSON.stringify(order, null, 2))
 
+function purgeUnpaid() {
+  const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000
+  for (const file of fs.readdirSync(ordersDir)) {
+    const order = readOrder(file.replace(/\.json$/, ''))
+    if (order && order.status !== 'paid' && Date.parse(order.createdAt) < cutoff) fs.unlinkSync(orderFile(order.id))
+  }
+}
+purgeUnpaid()
+setInterval(purgeUnpaid, 24 * 60 * 60 * 1000).unref()
+
 const sign = fields => crypto.createHash('sha384').update(JSON.stringify(fields)).digest('hex')
 
 async function p24(method, route, body) {

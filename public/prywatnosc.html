@@ -8,41 +8,231 @@
     body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: #f4f1ea; color: #18211c; line-height: 1.6; }
     main { width: min(820px, calc(100% - 40px)); margin: 48px auto 64px; background: #fffdf8; border: 1px solid #e3ddd1; border-radius: 18px; padding: 32px 36px; }
     h1 { margin-top: 0; letter-spacing: -0.03em; }
-    h2 { font-size: 1.1rem; margin-top: 28px; }
+    h2 { font-size: 1.15rem; margin-top: 36px; padding-top: 12px; border-top: 1px solid #e3ddd1; }
+    h3 { font-size: 0.95rem; margin: 24px 0 6px; text-transform: uppercase; letter-spacing: 0.02em; }
     li + li { margin-top: 4px; }
     a { color: #1f3d32; }
+    nav { background: #f4f1ea; border-radius: 12px; padding: 14px 20px; }
+    nav ol { margin: 6px 0 0; padding-left: 20px; }
+    nav ul { margin: 2px 0 6px; padding-left: 18px; font-size: 0.95rem; }
+    .muted { color: #5c645e; font-size: 0.95rem; }
   </style>
 </head>
 <body>
 <main>
   <p><a href="/">← OFFaktura</a></p>
-  <h1>Polityka prywatności</h1>
+  <h1>Polityka prywatności i plików cookies</h1>
 
-  <h2>Administrator</h2>
-  <p>Administratorem danych jest MK Translation Studio Marcin Kucharski, [uzupełnij: adres], NIP [uzupełnij], e-mail: [uzupełnij].</p>
+  <p>Korzystanie ze strony internetowej <a href="https://offaktura-production.up.railway.app">offaktura-production.up.railway.app</a>, zakup licencji programu OFFaktura i korzystanie z samego programu oznacza akceptację poniższej Polityki prywatności i Polityki cookies.</p>
+  <p>Zapoznaj się z jej postanowieniami. Poniższy spis treści pomoże Ci w tym. Informuję Cię w niej, jakie dane zbieram, w jakim celu i jak długo je przechowuję, komu je powierzam i jakie masz prawa. Jedną rzecz mówię od razu: <strong>faktury, klienci i ustawienia, które wpisujesz w programie, zostają na Twoim komputerze i nigdy do mnie nie trafiają.</strong></p>
 
-  <h2>Program</h2>
-  <p>Program OFFaktura nie wysyła Sprzedawcy żadnych danych. Faktury, klienci i ustawienia zostają na komputerze użytkownika. Program łączy się z KSeF, z bazą REGON (GUS) i z NBP wyłącznie na polecenie użytkownika.</p>
+  <nav>
+    <strong>Spis treści</strong>
+    <ol>
+      <li><a href="#p1">Postanowienia ogólne</a></li>
+      <li><a href="#p2">Definicje</a></li>
+      <li><a href="#p3">Dane osobowe i zasady ich przetwarzania</a>
+        <ul>
+          <li><a href="#administrator">Kto jest administratorem Twoich danych osobowych?</a></li>
+          <li><a href="#dobrowolnosc">Czy podanie danych jest dobrowolne?</a></li>
+          <li><a href="#cele">W jakich celach i na jakich podstawach prawnych przetwarzam Twoje dane?</a></li>
+          <li><a href="#zbieranie">W jaki sposób zbierane są dane?</a></li>
+          <li><a href="#prawa">Jakie są Twoje uprawnienia?</a></li>
+          <li><a href="#zgoda">Czy możesz cofnąć wyrażoną zgodę?</a></li>
+          <li><a href="#odbiorcy">Kim mogą być odbiorcy danych osobowych?</a></li>
+          <li><a href="#panstwa">Czy przekazuję Twoje dane do państw trzecich?</a></li>
+          <li><a href="#okres">Jak długo przechowuję Twoje dane?</a></li>
+          <li><a href="#bezpieczenstwo">Bezpieczeństwo danych</a></li>
+          <li><a href="#iod">Czy powołałem inspektora ochrony danych?</a></li>
+          <li><a href="#profilowanie">Czy profiluję Twoje dane?</a></li>
+          <li><a href="#linki">Linki odsyłające do innych stron</a></li>
+        </ul>
+      </li>
+      <li><a href="#p4">Program OFFaktura</a></li>
+      <li><a href="#p5">Formularze</a></li>
+      <li><a href="#p6">Wyłączenie odpowiedzialności i prawa autorskie</a></li>
+      <li><a href="#p7">Technologie</a></li>
+      <li><a href="#p8">Polityka plików cookies</a></li>
+      <li><a href="#p9">Logi serwera</a></li>
+    </ol>
+  </nav>
 
-  <h2>Zakup licencji</h2>
+  <h2 id="p1">§1 Postanowienia ogólne</h2>
   <ol>
-    <li>Przy zakupie zbieramy: adres e-mail, nazwę firmy albo imię i nazwisko, adres i NIP (jeśli podany).</li>
-    <li>Dane służą do zawarcia i wykonania umowy (art. 6 ust. 1 lit. b RODO), wystawienia faktury i prowadzenia rozliczeń (art. 6 ust. 1 lit. c RODO) oraz obsługi reklamacji (art. 6 ust. 1 lit. f RODO).</li>
-    <li>Dane przechowujemy przez okres wymagany przepisami podatkowymi, zwykle 5 lat od końca roku, w którym nastąpiła sprzedaż.</li>
+    <li>Niniejsza Polityka określa zasady przetwarzania i ochrony danych osobowych przekazywanych przez Użytkowników w związku z korzystaniem ze Strony, zakupem Licencji i korzystaniem z Programu.</li>
+    <li>W razie jakichkolwiek wątpliwości dotyczących tej Polityki skontaktuj się z Administratorem pod adresem e-mail: <a href="mailto:biuro@marcinkucharski.pl">biuro@marcinkucharski.pl</a>.</li>
+    <li>Administrator zastrzega sobie prawo do wprowadzania zmian w Polityce, a każdego Użytkownika obowiązuje znajomość jej aktualnej wersji. Przyczyną zmian mogą być rozwój technologii, zmiany w przepisach prawa albo rozwój Strony i Programu, np. korzystanie z nowych narzędzi. Na dole strony znajduje się data ostatniej aktualizacji.</li>
   </ol>
 
-  <h2>Odbiorcy danych</h2>
+  <h2 id="p2">§2 Definicje</h2>
   <ul>
-    <li>Przelewy24 (PayPro S.A.) – obsługa płatności.</li>
-    <li>Railway Corporation – serwer, na którym działa ta strona.</li>
-    <li>Resend – wysyłka wiadomości e-mail z kluczem licencji.</li>
+    <li><strong>Administrator</strong> – Marcin Kucharski prowadzący działalność gospodarczą pod firmą MK Translation Studio Marcin Kucharski, ul. Św. Bonifacego 77/100, 02-945 Warszawa, NIP 668 193 03 92, REGON 302306194.</li>
+    <li><strong>Użytkownik</strong> – każda osoba odwiedzająca Stronę, kupująca Licencję lub korzystająca z Programu.</li>
+    <li><strong>Strona</strong> – strona internetowa OFFaktura dostępna pod adresem <a href="https://offaktura-production.up.railway.app">offaktura-production.up.railway.app</a> wraz z podstronami.</li>
+    <li><strong>Program</strong> – program komputerowy OFFaktura do wystawiania faktur i obsługi Krajowego Systemu e-Faktur, działający na komputerze Użytkownika z systemem Windows.</li>
+    <li><strong>Licencja</strong> – płatna licencja na korzystanie z pełnej wersji Programu, potwierdzona kluczem licencji.</li>
+    <li><strong>Klucz licencji</strong> – ciąg znaków przekazywany Użytkownikowi po zakupie, który odblokowuje pełną wersję Programu.</li>
+    <li><strong>Formularz zamówienia</strong> – formularz na Stronie, w którym Użytkownik podaje dane potrzebne do zakupu Licencji.</li>
+    <li><strong>KSeF</strong> – Krajowy System e-Faktur prowadzony przez Szefa Krajowej Administracji Skarbowej.</li>
+    <li><strong>RODO</strong> – Rozporządzenie Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w związku z przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (ogólne rozporządzenie o ochronie danych).</li>
   </ul>
 
-  <h2>Twoje prawa</h2>
-  <p>Masz prawo dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przeniesienia oraz wniesienia sprzeciwu, a także skargi do Prezesa Urzędu Ochrony Danych Osobowych. Podanie danych jest dobrowolne, ale bez nich nie można kupić licencji.</p>
+  <h2 id="p3">§3 Dane osobowe i zasady ich przetwarzania</h2>
 
-  <h2>Pliki cookie</h2>
-  <p>Strona nie używa plików cookie do śledzenia ani reklam.</p>
+  <h3 id="administrator">Kto jest administratorem Twoich danych osobowych?</h3>
+  <p>Administratorem danych osobowych Użytkownika jest Marcin Kucharski prowadzący działalność gospodarczą pod firmą MK Translation Studio Marcin Kucharski, ul. Św. Bonifacego 77/100, 02-945 Warszawa, NIP 668 193 03 92, REGON 302306194, e-mail: <a href="mailto:biuro@marcinkucharski.pl">biuro@marcinkucharski.pl</a>.</p>
+
+  <h3 id="dobrowolnosc">Czy podanie danych jest dobrowolne? Co jest konsekwencją ich niepodania?</h3>
+  <p>Podanie danych jest dobrowolne. Pobranie Programu i przeglądanie Strony nie wymagają podawania żadnych danych. Bez danych oznaczonych w Formularzu zamówienia jako obowiązkowe (adres e-mail, nazwa firmy albo imię i nazwisko, adres) nie można jednak kupić Licencji. Podanie numeru NIP jest dobrowolne i potrzebne tylko wtedy, gdy chcesz otrzymać fakturę na firmę.</p>
+  <p>Jeśli podasz dane, których Administrator nie potrzebuje, np. w treści wiadomości e-mail, przetwarzanie odbywa się na podstawie Twojej decyzji (art. 6 ust. 1 lit. a RODO), a Administrator może je usunąć lub zanonimizować.</p>
+
+  <h3 id="cele">W jakich celach i na jakich podstawach prawnych przetwarzam Twoje dane?</h3>
+  <p>Dane osobowe Użytkownika mogą być przetwarzane w następujących celach i na następujących podstawach prawnych:</p>
+  <ol>
+    <li>zawarcia i wykonania umowy sprzedaży Licencji, w tym obsługi płatności, wygenerowania i dostarczenia Klucza licencji – na podstawie art. 6 ust. 1 lit. b RODO (niezbędność do zawarcia i wykonania umowy);</li>
+    <li>wystawienia faktury i spełnienia innych obowiązków wynikających z przepisów prawa podatkowego i rachunkowego – na podstawie art. 6 ust. 1 lit. c RODO (obowiązek prawny);</li>
+    <li>rozpatrzenia reklamacji i obsługi praw konsumenta – na podstawie art. 6 ust. 1 lit. b i c RODO;</li>
+    <li>ponownego przesłania Klucza licencji, gdy go zgubisz, i potwierdzenia, że Licencja została kupiona – na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes Administratora polegający na obsłudze klientów);</li>
+    <li>ustalenia, dochodzenia lub obrony przed roszczeniami – na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes Administratora);</li>
+    <li>odpowiedzi na wiadomości przesłane na adres e-mail Administratora – na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes polegający na prowadzeniu korespondencji), a jeśli wiadomość dotyczy zakupu, także art. 6 ust. 1 lit. b RODO;</li>
+    <li>zapewnienia bezpieczeństwa Strony, w tym ochrony Formularza zamówienia przed nadużyciami i zbyt dużą liczbą prób – na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes Administratora);</li>
+    <li>archiwalnym i dowodowym, na potrzeby wykazania faktów, np. zawarcia umowy i wyrażenia zgody na dostarczenie Klucza licencji przed upływem terminu do odstąpienia od umowy – na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes Administratora).</li>
+  </ol>
+  <p>Administrator <strong>nie</strong> przetwarza danych w celach marketingowych, nie prowadzi newslettera, nie używa narzędzi analitycznych ani reklamowych i nie tworzy baz danych Użytkowników do innych celów niż wymienione powyżej.</p>
+
+  <h3 id="zbieranie">W jaki sposób zbierane są dane?</h3>
+  <p>Zbierane są tylko te dane, które Użytkownik sam poda w Formularzu zamówienia albo w wiadomości e-mail. Wyjątkiem są dane techniczne zapisywane automatycznie w logach serwera (o czym mowa w §9) oraz dane o transakcji przekazywane przez operatora płatności (identyfikator i status płatności).</p>
+  <p>Strona nie korzysta z plików cookies, Google Analytics, Piksela Facebooka ani innych narzędzi śledzących.</p>
+
+  <h3 id="prawa">Jakie są Twoje uprawnienia?</h3>
+  <p>Użytkownikowi przysługują w każdej chwili uprawnienia zawarte w art. 15–21 RODO, tj.:</p>
+  <ul>
+    <li>prawo dostępu do treści swoich danych i otrzymania ich kopii,</li>
+    <li>prawo do sprostowania (poprawienia) danych,</li>
+    <li>prawo do usunięcia danych („prawo do bycia zapomnianym”), jeśli dalsze przetwarzanie nie jest wymagane przepisami prawa,</li>
+    <li>prawo do ograniczenia przetwarzania,</li>
+    <li>prawo do przenoszenia danych,</li>
+    <li>prawo do wniesienia sprzeciwu wobec przetwarzania danych na podstawie prawnie uzasadnionego interesu Administratora,</li>
+    <li>prawo do wniesienia skargi do organu nadzorczego – Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa), jeśli uznasz, że przetwarzanie Twoich danych narusza przepisy o ochronie danych osobowych.</li>
+  </ul>
+  <p>W celu realizacji swoich praw napisz na adres <a href="mailto:biuro@marcinkucharski.pl">biuro@marcinkucharski.pl</a> albo listownie na adres Administratora, wskazując zakres żądania. Pomoże, jeśli podasz adres e-mail użyty przy zakupie. Odpowiedź zostanie udzielona bez zbędnej zwłoki, nie później niż w ciągu miesiąca od otrzymania żądania.</p>
+
+  <h3 id="zgoda">Czy możesz cofnąć wyrażoną zgodę?</h3>
+  <p>Administrator nie opiera przetwarzania Twoich danych na zgodzie, z wyjątkiem danych, które podasz dobrowolnie ponad potrzebę. Taką zgodę możesz w każdej chwili cofnąć, pisząc na adres e-mail Administratora. Cofnięcie zgody nie wpływa na zgodność z prawem przetwarzania, którego dokonano przed jej cofnięciem.</p>
+  <p>Zgoda na dostarczenie Klucza licencji przed upływem terminu do odstąpienia od umowy, wyrażana w Formularzu zamówienia, nie jest zgodą na przetwarzanie danych, tylko oświadczeniem wymaganym przez ustawę o prawach konsumenta. Administrator przechowuje informację o jej złożeniu jako dowód.</p>
+
+  <h3 id="odbiorcy">Kim mogą być odbiorcy danych osobowych?</h3>
+  <p>Administrator powierza przetwarzanie danych tylko tym podmiotom, bez których nie mógłby sprzedać i dostarczyć Licencji:</p>
+  <ul>
+    <li><strong>PayPro S.A.</strong>, ul. Kanclerska 15, 60-327 Poznań, NIP 7792369887, KRS 0000347935 (operator serwisu Przelewy24) – w celu obsługi płatności. PayPro otrzymuje Twój adres e-mail oraz nazwę firmy albo imię i nazwisko. Dane karty lub rachunku bankowego podajesz bezpośrednio u operatora płatności i Administrator ich nie otrzymuje;</li>
+    <li><strong>Railway Corporation</strong> (USA) – w celu utrzymania serwera, na którym działa Strona i są przechowywane zamówienia (<a href="https://railway.com/legal/privacy" target="_blank" rel="noopener">polityka prywatności Railway</a>);</li>
+    <li><strong>Resend, Inc.</strong> (USA) – w celu wysyłki wiadomości e-mail z Kluczem licencji (<a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener">polityka prywatności Resend</a>);</li>
+    <li>dostawcy poczty elektronicznej i programu do fakturowania Administratora – w celu prowadzenia korespondencji i wystawienia faktury;</li>
+    <li>biuro rachunkowe, prawnicy i inni podwykonawcy świadczący Administratorowi usługi księgowe, prawne lub informatyczne – w zakresie niezbędnym do wykonania tych usług;</li>
+    <li>organy państwowe, w tym urząd skarbowy i Szef Krajowej Administracji Skarbowej (KSeF) – w celu realizacji obowiązków podatkowych, a także inne uprawnione organy na ich żądanie, jeśli wynika to z przepisów prawa.</li>
+  </ul>
+  <p>Dane z Formularza zamówienia nie są sprzedawane ani udostępniane innym podmiotom w celach marketingowych.</p>
+
+  <h3 id="panstwa">Czy przekazuję Twoje dane do państw trzecich?</h3>
+  <p>Tak, w ograniczonym zakresie. Railway Corporation i Resend, Inc. mają siedzibę w Stanach Zjednoczonych, a ich serwery mogą znajdować się poza Europejskim Obszarem Gospodarczym. Przekazanie odbywa się na podstawie mechanizmów przewidzianych w RODO, w szczególności:</p>
+  <ul>
+    <li>decyzji Komisji Europejskiej stwierdzającej odpowiedni stopień ochrony (EU-US Data Privacy Framework), jeśli dostawca jest w nim certyfikowany, lub</li>
+    <li>standardowych klauzul umownych zatwierdzonych przez Komisję Europejską, stosowanych przez dostawcę w umowie powierzenia przetwarzania danych.</li>
+  </ul>
+  <p>Szczegółowe informacje znajdziesz w politykach prywatności tych dostawców, podlinkowanych powyżej. Kopię zastosowanych zabezpieczeń możesz otrzymać, pisząc do Administratora.</p>
+
+  <h3 id="okres">Jak długo przechowuję Twoje dane?</h3>
+  <ol>
+    <li><strong>Zamówienia opłacone</strong> – przez 6 lat od końca roku, w którym kupiłeś Licencję. Ten okres obejmuje obowiązek przechowywania dokumentacji podatkowej (5 lat od końca roku, w którym powstał obowiązek podatkowy) i termin przedawnienia roszczeń. W tym czasie Administrator może też ponownie przesłać Ci Klucz licencji.</li>
+    <li><strong>Zamówienia nieopłacone</strong> – są automatycznie usuwane po 30 dniach od ich utworzenia.</li>
+    <li><strong>Faktury</strong> – przez okres wymagany przepisami prawa podatkowego.</li>
+    <li><strong>Korespondencja e-mail</strong> – przez czas potrzebny do załatwienia sprawy, a następnie nie dłużej niż do upływu terminu przedawnienia ewentualnych roszczeń z nią związanych.</li>
+    <li><strong>Adres IP używany do ochrony Formularza zamówienia</strong> – przez 10 minut, wyłącznie w pamięci serwera.</li>
+    <li><strong>Logi serwera</strong> – przez okres ustalony przez dostawcę hostingu, zwykle nie dłuższy niż kilkadziesiąt dni.</li>
+    <li>Dane przetwarzane na podstawie prawnie uzasadnionego interesu – do czasu skutecznego wniesienia sprzeciwu, chyba że Administrator wykaże ważne podstawy do dalszego przetwarzania, np. obronę przed roszczeniami.</li>
+  </ol>
+
+  <h3 id="bezpieczenstwo">Bezpieczeństwo danych</h3>
+  <p>Administrator stosuje środki techniczne i organizacyjne odpowiednie do zagrożeń, w szczególności:</p>
+  <ul>
+    <li>Strona działa wyłącznie przez szyfrowane połączenie HTTPS;</li>
+    <li>zamówienia są dostępne pod losowym identyfikatorem, którego nie da się odgadnąć;</li>
+    <li>klucze dostępowe do usług płatności i poczty oraz klucz podpisujący licencje są przechowywane wyłącznie w zabezpieczonych zmiennych serwera, a nie w kodzie Strony;</li>
+    <li>każde powiadomienie o płatności jest weryfikowane podpisem i potwierdzane u operatora płatności przed wydaniem Klucza licencji;</li>
+    <li>Formularz zamówienia ma ograniczenie liczby prób z jednego adresu IP.</li>
+  </ul>
+
+  <h3 id="iod">Czy powołałem inspektora ochrony danych?</h3>
+  <p>Administrator nie powołał Inspektora Ochrony Danych (IOD) i samodzielnie wykonuje obowiązki związane z przetwarzaniem danych osobowych.</p>
+  <p>Użytkownik przyjmuje do wiadomości, że jego dane osobowe mogą być przekazywane uprawnionym organom państwowym w związku z prowadzonymi przez nie postępowaniami, na ich żądanie i po spełnieniu przesłanek potwierdzających niezbędność pozyskania tych danych.</p>
+
+  <h3 id="profilowanie">Czy profiluję Twoje dane?</h3>
+  <p>Nie. Dane osobowe Użytkownika nie są wykorzystywane do zautomatyzowanego podejmowania decyzji ani do profilowania w rozumieniu RODO. Strona nie wyświetla reklam i nie korzysta z reklamy behawioralnej.</p>
+
+  <h3 id="linki">Linki odsyłające do innych stron</h3>
+  <p>Na Stronie znajdują się linki do innych serwisów, w szczególności do serwisu GitHub (GitHub, Inc., USA), z którego pobierasz instalator Programu, oraz do strony operatora płatności Przelewy24. Po przejściu na te strony obowiązują ich własne regulaminy i polityki prywatności, a ich operatorzy są odrębnymi administratorami danych. Administrator nie odpowiada za ich treść ani za sposób przetwarzania danych przez te podmioty.</p>
+
+  <h2 id="p4">§4 Program OFFaktura</h2>
+  <ol>
+    <li>Program działa na komputerze Użytkownika. Wszystkie dane wpisane w Programie – dane firmy, klienci, faktury sprzedażowe i zakupowe, ustawienia oraz token KSeF – są zapisywane w pliku bazy danych na dysku Użytkownika. <strong>Administrator nie ma do nich dostępu, nie otrzymuje ich i nie przechowuje.</strong> W zakresie tych danych to Użytkownik jest administratorem danych swoich kontrahentów.</li>
+    <li>Program nie wysyła Administratorowi żadnych danych o sposobie korzystania z niego (brak telemetrii i statystyk).</li>
+    <li>Program łączy się z internetem wyłącznie w następujących sytuacjach:
+      <ul>
+        <li><strong>KSeF</strong> (Ministerstwo Finansów) – gdy Użytkownik wysyła faktury, pobiera faktury sprzedażowe lub zakupowe albo testuje połączenie. Jest to wymóg ustawowy, a dane trafiają bezpośrednio do KSeF, z pominięciem Administratora;</li>
+        <li><strong>baza REGON</strong> (Główny Urząd Statystyczny) i <strong>Wykaz podatników VAT</strong> („biała lista”, Ministerstwo Finansów) – gdy Użytkownik wpisze NIP i poprosi o dane firmy. Program wysyła wyłącznie numer NIP i odczytuje publiczne dane;</li>
+        <li><strong>tabele kursów NBP</strong> (Narodowy Bank Polski) – gdy faktura jest w walucie obcej. Program wysyła wyłącznie walutę i datę;</li>
+        <li><strong>GitHub</strong> – gdy Program sprawdza, czy jest dostępna nowsza wersja, i pobiera aktualizację.</li>
+      </ul>
+      Przy każdym połączeniu dany serwis otrzymuje adres IP komputera Użytkownika, zgodnie z zasadami działania internetu.</li>
+    <li>Token KSeF jest szyfrowany mechanizmem systemu Windows przypisanym do konta Użytkownika i nie jest przekazywany nigdzie poza KSeF.</li>
+    <li>Klucz licencji jest sprawdzany na komputerze Użytkownika, bez łączenia się z serwerem Administratora. Klucz zawiera zapisane w nim dane z zamówienia (adres e-mail, nazwę firmy albo imię i nazwisko oraz NIP, jeśli został podany) i podpis cyfrowy. Dlatego nie publikuj swojego klucza i nie przekazuj go osobom trzecim.</li>
+    <li>Za bezpieczeństwo i kopie zapasowe bazy danych na swoim komputerze odpowiada Użytkownik.</li>
+  </ol>
+
+  <h2 id="p5">§5 Formularze</h2>
+  <p>Na Stronie działa jeden formularz zbierający dane osobowe.</p>
+  <ol>
+    <li><strong>Formularz zamówienia</strong> – służy do zakupu Licencji. Wymaga podania adresu e-mail, nazwy firmy albo imienia i nazwiska oraz adresu do faktury. Opcjonalnie możesz podać NIP. Formularz wymaga też akceptacji regulaminu i niniejszej Polityki oraz złożenia oświadczenia o dostarczeniu Klucza licencji przed upływem terminu do odstąpienia od umowy. Po wysłaniu formularza zostajesz przekierowany do serwisu Przelewy24, gdzie dokonujesz płatności. Po jej potwierdzeniu Klucz licencji wyświetla się na Stronie i jest wysyłany na podany adres e-mail, a Administrator otrzymuje wiadomość z danymi potrzebnymi do wystawienia faktury.</li>
+    <li><strong>Kontakt e-mail</strong> – Strona nie ma formularza kontaktowego. Jeśli napiszesz na adres Administratora, Twój adres e-mail i treść wiadomości będą przetwarzane w celu udzielenia odpowiedzi. Po zakończeniu sprawy wiadomość może zostać zarchiwizowana, nie dłużej niż do upływu terminu przedawnienia roszczeń.</li>
+  </ol>
+  <p>Na Stronie nie ma kont użytkowników, logowania, newslettera ani komentarzy.</p>
+
+  <h2 id="p6">§6 Wyłączenie odpowiedzialności i prawa autorskie</h2>
+  <ol>
+    <li>Treści przedstawione na Stronie mają charakter informacyjny i nie stanowią porady podatkowej ani prawnej. Za treść wystawianych faktur i ich zgodność z przepisami odpowiada Użytkownik, który je wystawia.</li>
+    <li>Program, jego nazwa, wygląd, teksty i grafiki na Stronie są chronione prawem autorskim. Ich kopiowanie i rozpowszechnianie bez zgody Administratora jest zabronione, z wyjątkiem przypadków dozwolonych przez prawo.</li>
+    <li>Treści umieszczone na Stronie są aktualne na dzień ich zamieszczenia, chyba że wskazano inaczej.</li>
+  </ol>
+
+  <h2 id="p7">§7 Technologie</h2>
+  <p>Do korzystania ze Strony i Programu potrzebujesz:</p>
+  <ol>
+    <li>urządzenia z dostępem do internetu i aktualnej przeglądarki internetowej,</li>
+    <li>aktywnego adresu e-mail – do otrzymania Klucza licencji i faktury,</li>
+    <li>komputera z systemem Windows 10 lub 11 – do instalacji Programu,</li>
+    <li>programu do odczytu plików PDF – do otwierania faktur.</li>
+  </ol>
+
+  <h2 id="p8">§8 Polityka plików cookies</h2>
+  <ol>
+    <li>Pliki cookies („ciasteczka”) to niewielkie pliki tekstowe zapisywane na urządzeniu Użytkownika podczas korzystania ze stron internetowych.</li>
+    <li><strong>Strona nie zapisuje żadnych plików cookies</strong> – ani własnych, ani podmiotów trzecich. Nie używa też innych technologii o podobnym działaniu, takich jak Local Storage, piksele śledzące czy odciski przeglądarki. Dlatego Strona nie wyświetla komunikatu o zgodzie na cookies.</li>
+    <li>Strona nie korzysta z Google Analytics, Piksela Facebooka, czcionek ani skryptów ładowanych z serwerów zewnętrznych.</li>
+    <li>Pliki cookies mogą zostać zapisane przez serwis Przelewy24 po przejściu do płatności oraz przez serwis GitHub przy pobieraniu instalatora. Zasady ich stosowania opisują polityki prywatności tych serwisów.</li>
+    <li>Ustawienia plików cookies możesz w każdej chwili zmienić w swojej przeglądarce. Więcej informacji znajdziesz w sekcji „Pomoc” przeglądarki.</li>
+  </ol>
+
+  <h2 id="p9">§9 Logi serwera</h2>
+  <ol>
+    <li>Korzystanie ze Strony wiąże się z przesyłaniem zapytań do serwera, na którym jest ona utrzymywana.</li>
+    <li>Zapytania mogą być zapisywane w logach serwera prowadzonych przez dostawcę hostingu (Railway). Logi mogą obejmować m.in. adres IP, datę i godzinę zapytania, adres odwiedzanej podstrony, kod odpowiedzi serwera oraz informacje o przeglądarce.</li>
+    <li>Serwer Strony zapisuje we własnych logach wyłącznie komunikaty o błędach technicznych.</li>
+    <li>Logi służą do administrowania Stroną i zapewnienia jej bezpieczeństwa. Ich treść nie jest ujawniana nikomu poza osobami i podmiotami upoważnionymi do administrowania serwerem.</li>
+    <li>Administrator nie wykorzystuje logów serwera do identyfikacji Użytkowników.</li>
+  </ol>
+
+  <p class="muted" style="margin-top: 36px;">Data ostatniej aktualizacji: 05.10.2026 r.</p>
+  <p class="muted">Kontakt: <a href="mailto:biuro@marcinkucharski.pl">biuro@marcinkucharski.pl</a></p>
 </main>
 </body>
 </html>
