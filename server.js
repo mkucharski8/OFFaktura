@@ -22,7 +22,8 @@ const cfg = {
   dataDir: process.env.DATA_DIR || path.join(__dirname, 'data')
 }
 const p24Host = process.env.P24_HOST || (cfg.sandbox ? 'https://sandbox.przelewy24.pl' : 'https://secure.przelewy24.pl')
-const salesOpen = () => Boolean(cfg.merchantId && cfg.posId && cfg.crc && cfg.apiKey && cfg.privateKey)
+const salesOpen = () => Boolean(cfg.merchantId && cfg.posId && cfg.crc && cfg.apiKey && cfg.privateKey) &&
+  (!cfg.sandbox || process.env.SANDBOX_SALES === '1')
 
 const ordersDir = path.join(cfg.dataDir, 'orders')
 fs.mkdirSync(ordersDir, { recursive: true })
