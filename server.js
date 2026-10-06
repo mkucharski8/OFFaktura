@@ -19,6 +19,7 @@ const cfg = {
   resendKey: process.env.RESEND_API_KEY || '',
   mailFrom: process.env.MAIL_FROM || 'OFFaktura <onboarding@resend.dev>',
   notify: process.env.ORDER_NOTIFY_EMAIL || '',
+  statsToken: process.env.STATS_TOKEN || '',
   dataDir: process.env.DATA_DIR || path.join(__dirname, 'data')
 }
 const p24Host = process.env.P24_HOST || (cfg.sandbox ? 'https://sandbox.przelewy24.pl' : 'https://secure.przelewy24.pl')
@@ -42,6 +43,54 @@ function purgeUnpaid() {
 }
 purgeUnpaid()
 setInterval(purgeUnpaid, 24 * 60 * 60 * 1000).unref()
+
+const statsDir = path.join(cfg.dataDir, 'stats')
+fs.mkdirSync(statsDir, { recursive: true })
+const BOT = /bot|crawl|spider|slurp|preview|facebookexternalhit|curl|wget|python|httpclient|headless|lighthouse|monitor/i
+const METRICS = ['views', 'entries', 'downloads', 'checkouts', 'paid']
+const statsCache = new Map()
+const dirtyDays = new Set()
+const warsawDay = (date = new Date()) => date.toLocaleDateString('sv-SE', { timeZone: 'Europe/Warsaw' })
+const statsFile = day => path.join(statsDir, `${day}.json`)
+
+function dayStats(day) {
+  if (!statsCache.has(day)) {
+    let data = null
+    try { data = JSON.parse(fs.readFileSync(statsFile(day), 'utf8')) } catch { /* nowy dzień */ }
+    statsCache.set(day, data || { pages: {}, channels: {}, devices: {} })
+  }
+  return statsCache.get(day)
+}
+
+function flushStats() {
+  for (const day of dirtyDays) fs.writeFileSync(statsFile(day), JSON.stringify(dayStats(day)))
+  dirtyDays.clear()
+}
+setInterval(flushStats, 15 * 1000).unref()
+
+const clean = (value, max = 60) => String(value || '').toLowerCase().replace(/[^\p{L}\p{N}._-]+/gu, '-').replace(/^-+|-+$/g, '').slice(0, max)
+
+function channelOf(utm, ref) {
+  const source = clean(utm?.source)
+  if (source) return [source, clean(utm?.campaign), clean(utm?.content)].filter(Boolean).join(' · ')
+  const host = clean(String(ref || '').replace(/^www\./, ''), 80)
+  return host || 'bezpośrednio'
+}
+
+function record(metric, { channel, page, device } = {}) {
+  const day = warsawDay()
+  const stats = dayStats(day)
+  stats[metric] = (stats[metric] || 0) + 1
+  const bump = (group, key) => {
+    if (!key) return
+    const row = stats[group][key] || (stats[group][key] = {})
+    row[metric] = (row[metric] || 0) + 1
+  }
+  bump('channels', channel)
+  bump('pages', page)
+  bump('devices', device)
+  dirtyDays.add(day)
+}
 
 const sign = fields => crypto.createHash('sha384').update(JSON.stringify(fields)).digest('hex')
 
@@ -142,6 +191,26 @@ app.get('/api/config', (_req, res) => {
   res.set('Cache-Control', 'no-store').json({ salesOpen: salesOpen(), price: cfg.price })
 })
 
+const PAGES = new Set(['/', '/regulamin', '/prywatnosc', '/dziekujemy', '/landing'])
+
+app.post('/api/hit', (req, res) => {
+  res.status(204).end()
+  const ua = String(req.get('user-agent') || '')
+  if (!ua || BOT.test(ua)) return
+  const body = req.body || {}
+  const page = PAGES.has(body.path) ? body.path : 'inne'
+  const ref = String(body.ref || '').toLowerCase()
+  const internal = ref === req.hostname
+  const channel = internal ? 'z innej podstrony' : channelOf(body.utm, ref)
+  const device = /Mobi|Android|iPhone|iPad/i.test(ua) ? 'telefon' : 'komputer'
+  if (body.kind === 'view') {
+    record('views', { page, device })
+    if (!internal) record('entries', { channel, device })
+  } else if (body.kind === 'download') {
+    record('downloads', { channel, page, device })
+  }
+})
+
 app.post('/api/checkout', async (req, res) => {
   if (!salesOpen()) return res.status(503).json({ error: 'Sprzedaż jeszcze nie ruszyła.' })
   if (limited(req.ip)) return res.status(429).json({ error: 'Za dużo prób. Spróbuj za kilka minut.' })
@@ -161,9 +230,11 @@ app.post('/api/checkout', async (req, res) => {
     email, company, address, nip,
     amount: cfg.price,
     status: 'pending',
+    channel: channelOf(req.body?.utm, String(req.body?.ref || '').toLowerCase() === req.hostname ? '' : req.body?.ref),
     createdAt: new Date().toISOString()
   }
   writeOrder(order)
+  record('checkouts', { channel: order.channel })
   try {
     const data = await p24('POST', '/transaction/register', {
       merchantId: cfg.merchantId,
@@ -216,6 +287,7 @@ app.post('/api/p24/status', async (req, res) => {
     order.paidAt = new Date().toISOString()
     order.license = issueLicense(order)
     writeOrder(order)
+    record('paid', { channel: order.channel || 'nieznane' })
   } catch (err) {
     console.error('verify', err)
     return res.status(500).end()
@@ -237,6 +309,138 @@ app.get('/api/order/:id', (req, res) => {
   res.json({ status: order.status, license: order.status === 'paid' ? order.license : undefined, email: order.email })
 })
 
+function statsAuthorized(req) {
+  const [scheme, value] = String(req.get('authorization') || '').split(' ')
+  if (scheme !== 'Basic' || !value) return false
+  const password = Buffer.from(value, 'base64').toString('utf8').split(':').slice(1).join(':')
+  const digest = text => crypto.createHash('sha256').update(text).digest()
+  return crypto.timingSafeEqual(digest(password), digest(cfg.statsToken))
+}
+
+let releaseCache = { at: 0, list: [] }
+async function releaseDownloads() {
+  if (Date.now() - releaseCache.at < 10 * 60 * 1000) return releaseCache.list
+  try {
+    const res = await fetch('https://api.github.com/repos/mkucharski8/OFFaktura/releases?per_page=50', {
+      headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'offaktura-site' },
+      signal: AbortSignal.timeout(5000)
+    })
+    if (!res.ok) throw new Error(`GitHub ${res.status}`)
+    const list = (await res.json()).map(release => ({
+      tag: release.tag_name,
+      date: String(release.published_at || '').slice(0, 10),
+      count: release.assets.filter(asset => asset.name.endsWith('.exe')).reduce((sum, asset) => sum + asset.download_count, 0)
+    }))
+    releaseCache = { at: Date.now(), list }
+  } catch (err) {
+    console.error('github', err.message)
+  }
+  return releaseCache.list
+}
+
+const esc = text => String(text).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch])
+const pct = (part, whole) => whole ? `${(100 * part / whole).toFixed(1).replace('.', ',')}%` : '–'
+
+function table(title, rows, columns, note = '') {
+  const head = columns.map(([label]) => `<th>${label}</th>`).join('')
+  const body = rows.length
+    ? rows.map(row => `<tr>${columns.map(([, get]) => `<td>${esc(get(row))}</td>`).join('')}</tr>`).join('')
+    : `<tr><td colspan="${columns.length}" class="muted">Brak danych</td></tr>`
+  return `<h2>${title}</h2>${note ? `<p class="muted">${note}</p>` : ''}<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`
+}
+
+app.get('/statystyki', async (req, res) => {
+  if (!cfg.statsToken) return res.status(404).end()
+  if (!statsAuthorized(req)) {
+    if (limited(req.ip)) return res.status(429).send('Za dużo prób. Spróbuj za kilka minut.')
+    return res.set('WWW-Authenticate', 'Basic realm="OFFaktura statystyki", charset="UTF-8"').status(401).send('Podaj hasło.')
+  }
+  flushStats()
+  const span = Math.min(Math.max(Number(req.query.dni) || 30, 1), 365)
+  const days = Array.from({ length: span }, (_, i) => warsawDay(new Date(Date.now() - i * 24 * 60 * 60 * 1000)))
+  const total = {}
+  const groups = { channels: {}, pages: {}, devices: {} }
+  const daily = days.map(day => {
+    const stats = dayStats(day)
+    for (const metric of METRICS) total[metric] = (total[metric] || 0) + (stats[metric] || 0)
+    for (const group of Object.keys(groups)) {
+      for (const [key, row] of Object.entries(stats[group] || {})) {
+        const target = groups[group][key] || (groups[group][key] = {})
+        for (const metric of METRICS) target[metric] = (target[metric] || 0) + (row[metric] || 0)
+      }
+    }
+    return { day, ...stats }
+  })
+  const sorted = (group, metric) => Object.entries(groups[group]).map(([key, row]) => ({ key, ...row })).sort((a, b) => (b[metric] || 0) - (a[metric] || 0))
+  const n = value => value || 0
+  const releases = await releaseDownloads()
+  const card = (label, value, sub = '') => `<div class="card"><span>${label}</span><b>${value}</b>${sub ? `<small>${sub}</small>` : ''}</div>`
+
+  res.set('Cache-Control', 'no-store').send(`<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<title>Statystyki · OFFaktura</title>
+<style>
+  body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: #f4f1ea; color: #18211c; }
+  main { width: min(1040px, calc(100% - 32px)); margin: 32px auto 60px; }
+  h1 { margin: 0 0 6px; letter-spacing: -0.03em; }
+  h2 { margin: 36px 0 10px; font-size: 1.15rem; }
+  .muted { color: #5a6860; font-size: 0.9rem; }
+  nav a { margin-right: 12px; color: #1f3d32; }
+  nav a.on { font-weight: 700; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 22px; }
+  .card { background: #fffdf8; border: 1px solid #e3ddd1; border-radius: 14px; padding: 14px 16px; }
+  .card span { display: block; color: #5a6860; font-size: 0.85rem; }
+  .card b { display: block; font-size: 1.7rem; letter-spacing: -0.02em; }
+  .card small { color: #5a6860; }
+  table { width: 100%; border-collapse: collapse; background: #fffdf8; border: 1px solid #e3ddd1; border-radius: 12px; overflow: hidden; font-size: 0.92rem; }
+  th, td { padding: 8px 12px; border-bottom: 1px solid #eee8dc; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  th { background: #f0ebe1; font-weight: 600; color: #5a6860; }
+</style></head><body><main>
+<h1>Statystyki OFFaktury</h1>
+<p class="muted">Ostatnie ${span} dni (czas polski). Liczone bez ciasteczek i bez adresów IP, więc to są wejścia, a nie unikalne osoby.</p>
+<nav>${[7, 30, 90, 365].map(d => `<a href="?dni=${d}" class="${d === span ? 'on' : ''}">${d} dni</a>`).join('')}</nav>
+<div class="cards">
+  ${card('Wejścia', n(total.entries))}
+  ${card('Odsłony', n(total.views))}
+  ${card('Kliknięcia „Pobierz”', n(total.downloads), pct(n(total.downloads), n(total.entries)) + ' wejść')}
+  ${card('Rozpoczęte zakupy', n(total.checkouts))}
+  ${card('Opłacone licencje', n(total.paid), `${(n(total.paid) * cfg.price / 100).toFixed(2).replace('.', ',')} zł`)}
+</div>
+${table('Źródła wejść', sorted('channels', 'entries'), [
+    ['Źródło · kampania · reklama', r => r.key],
+    ['Wejścia', r => n(r.entries)],
+    ['Pobrania', r => n(r.downloads)],
+    ['Pobrania / wejścia', r => pct(n(r.downloads), n(r.entries))],
+    ['Zakupy rozpoczęte', r => n(r.checkouts)],
+    ['Opłacone', r => n(r.paid)]
+  ], 'Reklamy rozpoznajesz po parametrach utm w linku, np. facebook · start · wyciek. Wejścia bez utm są przypisane do strony, z której ktoś przyszedł.')}
+${table('Urządzenia', sorted('devices', 'entries'), [
+    ['Urządzenie', r => r.key],
+    ['Wejścia', r => n(r.entries)],
+    ['Odsłony', r => n(r.views)],
+    ['Pobrania', r => n(r.downloads)]
+  ])}
+${table('Podstrony', sorted('pages', 'views'), [
+    ['Podstrona', r => r.key],
+    ['Odsłony', r => n(r.views)],
+    ['Pobrania', r => n(r.downloads)]
+  ])}
+${table('Dzień po dniu', daily, [
+    ['Dzień', r => r.day],
+    ['Wejścia', r => n(r.entries)],
+    ['Odsłony', r => n(r.views)],
+    ['Pobrania', r => n(r.downloads)],
+    ['Zakupy rozpoczęte', r => n(r.checkouts)],
+    ['Opłacone', r => n(r.paid)]
+  ])}
+${table('Pobrania instalatora z GitHuba', releases, [
+    ['Wersja', r => r.tag],
+    ['Wydana', r => r.date],
+    ['Pobrania', r => r.count]
+  ], 'Licznik GitHuba za cały czas. Obejmuje też pobrania przez automatyczną aktualizację w programie.')}
+</main></body></html>`)
+})
+
 app.get(['/landing', '/landing/'], (_req, res) => {
   res.sendFile(index)
 })
@@ -253,6 +457,7 @@ const server = app.listen(port, () => {
 
 for (const signal of ['SIGTERM', 'SIGINT']) {
   process.on(signal, () => {
+    flushStats()
     server.close(() => process.exit(0))
     setTimeout(() => process.exit(0), 5000).unref()
   })
