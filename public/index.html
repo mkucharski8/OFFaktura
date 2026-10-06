@@ -517,7 +517,7 @@
     const buyBtn = document.getElementById('buyBtn')
     const buyMsg = document.getElementById('buyMsg')
     const say = (text, info) => { buyMsg.textContent = text; buyMsg.classList.toggle('info', Boolean(info)) }
-    fetch('/api/config').then(r => r.json()).then(cfg => {
+    fetch('/api/config', { cache: 'no-store' }).then(r => r.json()).then(cfg => {
       if (!cfg.salesOpen) {
         buyBtn.disabled = true
         buyBtn.textContent = 'Sprzedaż ruszy wkrótce'

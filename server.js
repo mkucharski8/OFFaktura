@@ -139,7 +139,7 @@ app.get('/health', (_req, res) => {
 })
 
 app.get('/api/config', (_req, res) => {
-  res.json({ salesOpen: salesOpen(), price: cfg.price })
+  res.set('Cache-Control', 'no-store').json({ salesOpen: salesOpen(), price: cfg.price })
 })
 
 app.post('/api/checkout', async (req, res) => {
