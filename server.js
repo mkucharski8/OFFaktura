@@ -231,10 +231,11 @@ app.post('/api/checkout', async (req, res) => {
     amount: cfg.price,
     status: 'pending',
     channel: channelOf(req.body?.utm, String(req.body?.ref || '').toLowerCase() === req.hostname ? '' : req.body?.ref),
+    test: req.body?.test === true,
     createdAt: new Date().toISOString()
   }
   writeOrder(order)
-  record('checkouts', { channel: order.channel })
+  if (!order.test) record('checkouts', { channel: order.channel })
   try {
     const data = await p24('POST', '/transaction/register', {
       merchantId: cfg.merchantId,
@@ -287,7 +288,7 @@ app.post('/api/p24/status', async (req, res) => {
     order.paidAt = new Date().toISOString()
     order.license = issueLicense(order)
     writeOrder(order)
-    record('paid', { channel: order.channel || 'nieznane' })
+    if (!order.test) record('paid', { channel: order.channel || 'nieznane' })
   } catch (err) {
     console.error('verify', err)
     return res.status(500).end()
@@ -445,6 +446,13 @@ app.get('/statystyki', async (req, res) => {
 </style></head><body><main>
 <h1>Statystyki OFFaktury</h1>
 <p class="muted">Ostatnie ${span} dni (czas polski). Liczone bez ciasteczek i bez adresów IP, więc to są wejścia, a nie unikalne osoby.</p>
+<p class="muted" id="self"></p>
+<script>
+  try {
+    localStorage.setItem('offaktura-nie-licz', '1')
+    document.getElementById('self').textContent = 'Twoje wejścia z tej przeglądarki nie są liczone. Na innym urządzeniu otwórz ten panel albo stronę z dopiskiem ?nie-licz.'
+  } catch {}
+</script>
 <nav>${[7, 30, 90, 365].map(d => `<a href="?dni=${d}&m=${metric}" class="${d === span ? 'on' : ''}">${d} dni</a>`).join('')}</nav>
 <div class="cards">
   ${card('entries', n(total.entries))}

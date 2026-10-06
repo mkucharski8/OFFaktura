@@ -514,11 +514,20 @@
     show('issue')
 
     const query = new URLSearchParams(location.search)
+    const excluded = (() => {
+      try {
+        if (query.has('nie-licz')) localStorage.setItem('offaktura-nie-licz', '1')
+        if (query.has('licz')) localStorage.removeItem('offaktura-nie-licz')
+        return localStorage.getItem('offaktura-nie-licz') === '1'
+      } catch { return false }
+    })()
     const visit = {
       utm: Object.fromEntries(['source', 'medium', 'campaign', 'content'].map(key => [key, query.get('utm_' + key) || ''])),
-      ref: (() => { try { return document.referrer ? new URL(document.referrer).hostname : '' } catch { return '' } })()
+      ref: (() => { try { return document.referrer ? new URL(document.referrer).hostname : '' } catch { return '' } })(),
+      test: excluded
     }
     const track = kind => {
+      if (excluded) return
       try { navigator.sendBeacon('/api/hit', new Blob([JSON.stringify({ kind, path: location.pathname, ...visit })], { type: 'application/json' })) } catch {}
     }
     track('view')
