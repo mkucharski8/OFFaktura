@@ -349,6 +349,37 @@ function table(title, rows, columns, note = '') {
   return `<h2>${title}</h2>${note ? `<p class="muted">${note}</p>` : ''}<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`
 }
 
+const METRIC_LABELS = { entries: 'Wejścia', views: 'Odsłony', downloads: 'Kliknięcia „Pobierz”', checkouts: 'Rozpoczęte zakupy', paid: 'Opłacone licencje' }
+
+function chart(points, label) {
+  const width = 1000
+  const height = 260
+  const pad = { top: 16, right: 16, bottom: 30, left: 44 }
+  const innerW = width - pad.left - pad.right
+  const innerH = height - pad.top - pad.bottom
+  const max = Math.max(...points.map(p => p.value), 0)
+  const step = max <= 5 ? 1 : Math.pow(10, Math.floor(Math.log10(max / 4)))
+  const nice = [1, 2, 5, 10].map(m => m * step).find(s => max / s <= 5) || step * 10
+  const top = Math.max(nice * Math.ceil(max / nice), nice)
+  const x = i => pad.left + (points.length === 1 ? innerW / 2 : (i * innerW) / (points.length - 1))
+  const y = v => pad.top + innerH - (v / top) * innerH
+  const grid = []
+  for (let v = 0; v <= top; v += nice) {
+    grid.push(`<line x1="${pad.left}" x2="${width - pad.right}" y1="${y(v)}" y2="${y(v)}" class="grid"/><text x="${pad.left - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`)
+  }
+  const every = Math.max(1, Math.ceil(points.length / 10))
+  const labels = points.map((p, i) => i % every === 0 || i === points.length - 1
+    ? `<text x="${x(i)}" y="${height - 8}" text-anchor="middle">${p.day.slice(8, 10)}.${p.day.slice(5, 7)}</text>`
+    : '').join('')
+  const line = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join(' ')
+  const area = `${line} L${x(points.length - 1).toFixed(1)},${y(0)} L${x(0).toFixed(1)},${y(0)} Z`
+  const dots = points.map((p, i) => `<g class="dot"><circle cx="${x(i).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="3.5"/><rect x="${(x(i) - innerW / points.length / 2).toFixed(1)}" y="${pad.top}" width="${Math.max(innerW / points.length, 4).toFixed(1)}" height="${innerH}"/><title>${p.day}: ${p.value} · ${esc(label)}</title></g>`).join('')
+  return `<svg viewBox="0 0 ${width} ${height}" class="chart${points.length > 60 ? ' dense' : ''}" role="img" aria-label="${esc(label)} dzień po dniu">
+    ${grid.join('')}${labels}
+    <path d="${area}" class="area"/><path d="${line}" class="line"/>${dots}
+  </svg>`
+}
+
 app.get('/statystyki', async (req, res) => {
   if (!cfg.statsToken) return res.status(404).end()
   if (!statsAuthorized(req)) {
@@ -374,7 +405,9 @@ app.get('/statystyki', async (req, res) => {
   const sorted = (group, metric) => Object.entries(groups[group]).map(([key, row]) => ({ key, ...row })).sort((a, b) => (b[metric] || 0) - (a[metric] || 0))
   const n = value => value || 0
   const releases = await releaseDownloads()
-  const card = (label, value, sub = '') => `<div class="card"><span>${label}</span><b>${value}</b>${sub ? `<small>${sub}</small>` : ''}</div>`
+  const metric = METRICS.includes(req.query.m) ? req.query.m : 'entries'
+  const points = [...daily].reverse().map(row => ({ day: row.day, value: n(row[metric]) }))
+  const card = (key, value, sub = '') => `<a class="card${key === metric ? ' on' : ''}" href="?dni=${span}&m=${key}"><span>${METRIC_LABELS[key]}</span><b>${value}</b>${sub ? `<small>${sub}</small>` : ''}</a>`
 
   res.set('Cache-Control', 'no-store').send(`<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
 <title>Statystyki · OFFaktura</title>
@@ -387,7 +420,21 @@ app.get('/statystyki', async (req, res) => {
   nav a { margin-right: 12px; color: #1f3d32; }
   nav a.on { font-weight: 700; }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 22px; }
-  .card { background: #fffdf8; border: 1px solid #e3ddd1; border-radius: 14px; padding: 14px 16px; }
+  .card { display: block; background: #fffdf8; border: 1px solid #e3ddd1; border-radius: 14px; padding: 14px 16px; color: inherit; text-decoration: none; border-top: 4px solid transparent; }
+  .card:hover { border-color: #cfc8ba; }
+  .card.on { border-top-color: #1a73e8; box-shadow: 0 6px 18px rgba(26, 115, 232, 0.12); }
+  .chart-box { margin-top: 14px; background: #fffdf8; border: 1px solid #e3ddd1; border-radius: 14px; padding: 4px 18px 10px; }
+  .chart-box h2 { margin: 14px 0 6px; }
+  .chart { width: 100%; height: auto; display: block; }
+  .chart text { font-size: 12px; fill: #5a6860; }
+  .chart .grid { stroke: #eee8dc; }
+  .chart .line { fill: none; stroke: #1a73e8; stroke-width: 2.5; stroke-linejoin: round; }
+  .chart .area { fill: rgba(26, 115, 232, 0.1); }
+  .chart .dot circle { fill: #fff; stroke: #1a73e8; stroke-width: 2; }
+  .chart .dot rect { fill: transparent; }
+  .chart .dot:hover circle { r: 5.5; fill: #1a73e8; }
+  .chart.dense .dot circle { opacity: 0; }
+  .chart.dense .dot:hover circle { opacity: 1; }
   .card span { display: block; color: #5a6860; font-size: 0.85rem; }
   .card b { display: block; font-size: 1.7rem; letter-spacing: -0.02em; }
   .card small { color: #5a6860; }
@@ -398,14 +445,15 @@ app.get('/statystyki', async (req, res) => {
 </style></head><body><main>
 <h1>Statystyki OFFaktury</h1>
 <p class="muted">Ostatnie ${span} dni (czas polski). Liczone bez ciasteczek i bez adresów IP, więc to są wejścia, a nie unikalne osoby.</p>
-<nav>${[7, 30, 90, 365].map(d => `<a href="?dni=${d}" class="${d === span ? 'on' : ''}">${d} dni</a>`).join('')}</nav>
+<nav>${[7, 30, 90, 365].map(d => `<a href="?dni=${d}&m=${metric}" class="${d === span ? 'on' : ''}">${d} dni</a>`).join('')}</nav>
 <div class="cards">
-  ${card('Wejścia', n(total.entries))}
-  ${card('Odsłony', n(total.views))}
-  ${card('Kliknięcia „Pobierz”', n(total.downloads), pct(n(total.downloads), n(total.entries)) + ' wejść')}
-  ${card('Rozpoczęte zakupy', n(total.checkouts))}
-  ${card('Opłacone licencje', n(total.paid), `${(n(total.paid) * cfg.price / 100).toFixed(2).replace('.', ',')} zł`)}
+  ${card('entries', n(total.entries))}
+  ${card('views', n(total.views))}
+  ${card('downloads', n(total.downloads), pct(n(total.downloads), n(total.entries)) + ' wejść')}
+  ${card('checkouts', n(total.checkouts))}
+  ${card('paid', n(total.paid), `${(n(total.paid) * cfg.price / 100).toFixed(2).replace('.', ',')} zł`)}
 </div>
+<div class="chart-box"><h2>${METRIC_LABELS[metric]} dzień po dniu</h2>${chart(points, METRIC_LABELS[metric])}<p class="muted">Kliknij kartę powyżej, żeby zmienić wykres. Najedź na punkt, żeby zobaczyć wartość.</p></div>
 ${table('Źródła wejść', sorted('channels', 'entries'), [
     ['Źródło · kampania · reklama', r => r.key],
     ['Wejścia', r => n(r.entries)],
